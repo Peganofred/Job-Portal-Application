@@ -1,0 +1,37 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: job-portal-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/jobportal_db
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  data:
+    redis:
+      host: localhost
+      port: 6380
+
+  cache:
+    type: redis
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:jobPortalSecretKey90123456789012345678901234567890}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+
+file:
+  upload-dir: ${FILE_UPLOAD_DIR:./uploads}
