@@ -15,9 +15,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<Map<String, Object>> handleApiException(ApiException ex) {
-        HttpStatus status = ex instanceof ResourceNotFoundException
-                ? HttpStatus.NOT_FOUND
-                : HttpStatus.BAD_REQUEST;
+        HttpStatus status;
+        if (ex instanceof ResourceNotFoundException) {
+            status = HttpStatus.NOT_FOUND;
+        } else if (ex instanceof ForbiddenException) {
+            status = HttpStatus.FORBIDDEN;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
         return buildResponse(status, ex.getMessage());
     }
 
