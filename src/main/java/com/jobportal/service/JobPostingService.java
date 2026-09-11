@@ -5,6 +5,7 @@ import com.jobportal.dto.JobPostingResponse;
 import com.jobportal.dto.UpdateJobRequest;
 import com.jobportal.entity.JobPosting;
 import com.jobportal.entity.User;
+import com.jobportal.enums.JobType;
 import com.jobportal.exception.ForbiddenException;
 import com.jobportal.exception.ResourceNotFoundException;
 import com.jobportal.repository.JobPostingRepository;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +56,13 @@ public class JobPostingService {
         Pageable pageable = buildPageable(page, size, sortBy, sortDir);
         return jobPostingRepository.findByRecruiterId(recruiterId, pageable)
                 .map(JobPostingResponse::from);
+    }
+
+    public Page<JobPostingResponse> searchJobs(String keyword, String location, JobType jobType,
+                                               int page, int size, String sortBy, String sortDir) {
+        Pageable pageable = buildPageable(page, size, sortBy, sortDir);
+        Specification<JobPosting> spec = JobSearchSpecification.searchFilter(keyword, location, jobType);
+        return jobPostingRepository.findAll(spec, pageable).map(JobPostingResponse::from);
     }
 
     @Transactional

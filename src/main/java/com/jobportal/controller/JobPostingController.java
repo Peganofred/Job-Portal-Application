@@ -3,6 +3,7 @@ package com.jobportal.controller;
 import com.jobportal.dto.CreateJobRequest;
 import com.jobportal.dto.JobPostingResponse;
 import com.jobportal.dto.UpdateJobRequest;
+import com.jobportal.enums.JobType;
 import com.jobportal.security.UserPrincipal;
 import com.jobportal.service.JobPostingService;
 import jakarta.validation.Valid;
@@ -38,6 +39,19 @@ public class JobPostingController {
             @Valid @RequestBody CreateJobRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(jobPostingService.createJob(principal.getId(), request));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<JobPostingResponse>> searchJobs(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) JobType jobType,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir) {
+        return ResponseEntity.ok(jobPostingService.searchJobs(
+                keyword, location, jobType, page, size, sortBy, sortDir));
     }
 
     @GetMapping("/{id}")
